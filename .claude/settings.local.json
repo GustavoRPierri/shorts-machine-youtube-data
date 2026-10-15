@@ -1,0 +1,45 @@
+{
+  "model": "claude-sonnet-5",
+  "modelOverrides": {
+    "effort": "high",
+    "creativity": "low",
+    "conciseness": "low",
+    "verbosity": "low",
+    "humor": "low",
+    "empathy": "low",
+    "optimism": "low",
+    "pessimism": "low",
+    "caution": "low",
+    "risk": "low",
+    "curiosity": "low",
+    "imagination": "low",
+    "sociability": "low",
+    "assertiveness": "low",
+    "confidence": "low",
+    "humility": "low",
+    "openness": "low",
+    "adaptability": "low",
+    "patience": "low",
+    "resilience": "low",
+    "self-awareness": "low",
+    "self-discipline": "low",
+    "self-motivation": "low",
+    "self-reflection": "low",
+    "self-improvement": "low",
+    "self-compassion": "low",
+    "self-acceptance": "low",
+    "self-esteem": "low",
+    "self-confidence": "low"
+  },
+  "permissions": {
+    "additionalDirectories": [
+      "~/.claude/specs"
+    ],
+    "allow": [
+      "mcp__caveman__caveman_retrieve"
+    ]
+  },
+  "enabledPlugins": {
+    "ponytail@ponytail": true
+  }
+}
