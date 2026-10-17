@@ -1,3 +1,5 @@
+import textwrap
+
 from pydantic import BaseModel, ConfigDict, Field
 
 class IdModel(BaseModel):
@@ -7,13 +9,7 @@ class IdModel(BaseModel):
     video_id: str = Field(alias="videoId")
 
     def __str__(self) -> str:
-
-        dados = {
-            "recurso_api": self.recurso_api,
-            "video_id": self.video_id,
-        }
-
-        return f"{dados}"
+        return f"Recurso: {self.recurso_api} | Video ID: {self.video_id}"
 
 class ItemModel(BaseModel):
     model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
@@ -23,14 +19,12 @@ class ItemModel(BaseModel):
     id: IdModel = Field(alias="id")
 
     def __str__(self) -> str:
-
-        dados = {
-            "recurso_api": self.recurso_api,
-            "id_search": self.id_search,
-            "id": self.id
-        }
-
-        return f"{dados}"
+        linhas = [
+            f"Recurso: {self.recurso_api}",
+            f"Etag: {self.id_search}",
+            f"  {self.id}",
+        ]
+        return "\n".join(linhas)
 
 class PaginaInfoModel(BaseModel):
     model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
@@ -39,13 +33,7 @@ class PaginaInfoModel(BaseModel):
     resultados_por_pagina: int = Field(alias="resultsPerPage")
 
     def __str__(self) -> str:
-
-        dados = {
-            "total_resultados": self.total_resultados,
-            "resultados_por_pagina": self.resultados_por_pagina,
-        }
-
-        return f"{dados}"
+        return f"Total de resultados: {self.total_resultados} | Por página: {self.resultados_por_pagina}"
 
 class SearchModel(BaseModel):
     # validate_by_name: também aceita os nomes em português (ex.: nome=...)
@@ -60,15 +48,15 @@ class SearchModel(BaseModel):
     items: list[ItemModel] = Field(alias="items")
 
     def __str__(self) -> str:
-
-        dados = {
-            "recurso_api": self.recurso_api,
-            "id_search": self.id_search,
-            "proxima_pagina": self.proxima_pagina,
-            "pagina_anterior": self.pagina_anterior,
-            "codigo_regiao": self.codigo_regiao,
-            "pagina_info": self.pagina_info,
-            "items": self.items
-        }
-
-        return f"{dados}"
+        itens = "\n".join(textwrap.indent(str(item), "  ") for item in self.items)
+        linhas = [
+            f"Recurso: {self.recurso_api}",
+            f"Etag: {self.id_search}",
+            f"Região: {self.codigo_regiao}",
+            f"Próxima página: {self.proxima_pagina}",
+            f"Página anterior: {self.pagina_anterior}",
+            f"Página info: {self.pagina_info}",
+            "Itens:",
+            itens,
+        ]
+        return "\n".join(linhas)

@@ -1,7 +1,6 @@
+import textwrap
 from datetime import datetime
-
 from pydantic import BaseModel, ConfigDict, Field
-
 
 class CommentModel(BaseModel):
     # validate_by_name: também aceita os nomes em português (ex.: autor=...)
@@ -21,3 +20,9 @@ class CommentModel(BaseModel):
     # O yt-dlp devolve os comentários numa lista plana; as respostas são
     # penduradas aqui por quem montar a árvore (ex.: o controller).
     respostas: list["CommentModel"] = Field(default_factory=list, alias="replies")
+
+    def __str__(self) -> str:
+        linhas = [f"[{self.autor}] {self.texto}"]
+        for resposta in self.respostas:
+            linhas.append(textwrap.indent(str(resposta), "  "))
+        return "\n".join(linhas)

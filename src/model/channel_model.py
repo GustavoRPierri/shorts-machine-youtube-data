@@ -1,38 +1,100 @@
-from pydantic import BaseModel, ConfigDict, Field
+import textwrap
 
+from pydantic import AliasPath, BaseModel, ConfigDict, Field
 
-class ChannelModel(BaseModel):
-    # validate_by_name: também aceita os nomes em português (ex.: nome=...)
-    model_config = ConfigDict(frozen=True, validate_by_name=True)
+class SnippetModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
 
-    id: str = Field(alias="channel_id")                    # UCxxxx
-    handle: str = Field(alias="uploader_id")               # @canal
-    url: str = Field(alias="channel_url")
-    nome: str = Field(alias="channel")
+    titulo: str = Field(alias="title")
     descricao: str = Field(default="", alias="description")
-    inscritos: int | None = Field(default=None, alias="channel_follower_count")
-    verificado: bool = Field(default=False, alias="channel_is_verified")
-    tags: list[str] = Field(default_factory=list)
-    # O yt-dlp não fornece na página do canal; ficam None até virem de outra fonte.
-    qtd_videos: int | None = Field(default=None, alias="video_count")
-    qtd_visualizacoes: int | None = Field(default=None, alias="view_count")
+    url_imagem: str = Field(alias="customUrl")
+    data_publicacao: str = Field(alias="publishedAt")
 
     def __str__(self) -> str:
+        linhas = [
+            f"Título: {self.titulo}",
+            f"Descrição: {self.descricao or '(sem descrição)'}",
+            f"Handle/URL: {self.url_imagem}",
+            f"Publicado em: {self.data_publicacao}",
+        ]
+        return "\n".join(linhas)
 
-        dados = {
-            "id": self.id,
-            "handle": self.handle,
-            "nome": self.nome,
-            "descricao": self.descricao,
-            "inscritos": self.inscritos,
-            "verificado": self.verificado,
-            "tags": self.tags,
-            "qtd_videos": self.qtd_videos,
-            "qtd_visualizacoes": self.qtd_visualizacoes,
-        }
 
-        return f"{dados}"
+class PlaylistModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
 
+    uploads: str = Field(alias="uploads")
+
+    def __str__(self) -> str:
+        return f"uploads: {self.uploads}"
+
+
+class ContentModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
+
+    playlist: PlaylistModel = Field(alias="relatedPlaylists")
+
+    def __str__(self) -> str:
+        return f"content: {self.content}"
+
+
+class StatisticsModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
+
+    inscritos: int = Field(alias="subscriberCount")
+    qtd_videos: int = Field(alias="videoCount")
+    qtd_visualizacoes: int = Field(alias="viewCount")
+    qtd_curtidas: int | None = Field(default=None, alias="likeCount")
+    qtd_comentarios: int | None = Field(default=None, alias="commentCount")
+
+    def __str__(self) -> str:
+        linhas = [
+            f"Inscritos: {self.inscritos}",
+            f"Vídeos: {self.qtd_videos}",
+            f"Visualizações: {self.qtd_visualizacoes}",
+            f"Curtidas: {self.qtd_curtidas}",
+            f"Comentários: {self.qtd_comentarios}",
+        ]
+        return "\n".join(linhas)
+
+
+class BrandingModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True, extra="ignore")
+
+    keywords: str = Field(validation_alias=AliasPath("channel", "keywords"))
+
+    def __str__(self) -> str:
+        return f"Keywords: {self.keywords}"
+
+
+class ItemModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True)
+
+    canal_id: str = Field(alias="id")
+    snippet: SnippetModel = Field(alias="snippet")
+    content: ContentModel = Field(alias="contentDetails")
+    statistics: StatisticsModel = Field(alias="statistics")
+    branding: BrandingModel = Field(alias="brandingSettings")
+
+    def __str__(self) -> str:
+        linhas = [
+            f"Canal ID: {self.canal_id}",
+            textwrap.indent(str(self.snippet), "  "),
+            textwrap.indent(str(self.content), "  "),
+            textwrap.indent(str(self.statistics), "  "),
+            textwrap.indent(str(self.branding), "  "),
+        ]
+        return "\n".join(linhas)
+
+    
+class ChannelModel(BaseModel):
+    model_config = ConfigDict(frozen=True, validate_by_name=True)
+
+    items: list[ItemModel] = Field(alias="items")
+
+    def __str__(self) -> str:
+        itens = "\n\n".join(textwrap.indent(str(item), "  ") for item in self.items)
+        return f"Canal(is):\n{itens}"
 
 # itens = dados.get("items") or [] # Evita None caso items não exista
 #         if not itens:

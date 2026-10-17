@@ -1,4 +1,15 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__caveman__caveman_retrieve",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import ast; ast.parse\\(open\\('src/service/api_service.py'\\).read\\(\\)\\)\")",
+      "Bash(PYTHONPATH=src python3 -c ' *)"
+    ],
+    "additionalDirectories": [
+      "~/.claude/specs"
+    ]
+  },
   "model": "claude-sonnet-5",
   "modelOverrides": {
     "effort": "high",
@@ -30,14 +41,6 @@
     "self-acceptance": "low",
     "self-esteem": "low",
     "self-confidence": "low"
-  },
-  "permissions": {
-    "additionalDirectories": [
-      "~/.claude/specs"
-    ],
-    "allow": [
-      "mcp__caveman__caveman_retrieve"
-    ]
   },
   "enabledPlugins": {
     "ponytail@ponytail": true
