@@ -4,7 +4,11 @@
       "mcp__caveman__caveman_retrieve",
       "Bash(python3 -c ' *)",
       "Bash(python3 -c \"import ast; ast.parse\\(open\\('src/service/api_service.py'\\).read\\(\\)\\)\")",
-      "Bash(PYTHONPATH=src python3 -c ' *)"
+      "Bash(PYTHONPATH=src python3 -c ' *)",
+      "Bash(/home/gustavorp/.nvm/versions/node/v22.23.3/bin/caveman shrink *)",
+      "Bash(jupyter nbconvert *)",
+      "Bash(python *)",
+      "Bash(python3 *)"
     ],
     "additionalDirectories": [
       "~/.claude/specs"

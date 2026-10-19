@@ -15,8 +15,9 @@ class ConversorService:
 
     def obter_dados(self, dados: dict, classe: type[T]) -> T:
         try:
-            log.info("[CONVERSOR][OBTER_DADOS] ")
-            return 
+            dto = classe.model_validate(dados)
+            log.info(f"[CONVERSOR][OBTER_DADOS] Dados convertidos para {classe.__name__}: {dto.__str__()}")
+            return dto
         
         except Exception as ex:
             log.error(f"[CONVERSOR][OBTER_DADOS] Erro ao converter para {classe.__name__}: {ex}")
@@ -24,7 +25,9 @@ class ConversorService:
 
     def obter_lista(self, dados: list[dict], classe: type[T]) -> list[T]:
         try:
-            return [self.obter_dados(item, classe) for item in dados]
+            dto_list = [self.obter_dados(item, classe) for item in dados]
+            log.info(f"[CONVERSOR][OBTER_LISTA] Lista de dados convertidos para {classe.__name__}: {[dto.__str__() for dto in dto_list]}")
+            return dto_list
 
         except Exception as ex:
             log.error(f"[CONVERSOR][OBTER_LISTA] Erro ao converter lista para {classe.__name__}: {ex}")

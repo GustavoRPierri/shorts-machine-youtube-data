@@ -35,7 +35,7 @@ class ContentModel(BaseModel):
     playlist: PlaylistModel = Field(alias="relatedPlaylists")
 
     def __str__(self) -> str:
-        return f"content: {self.content}"
+        return f"content: {self.playlist}"
 
 
 class StatisticsModel(BaseModel):
